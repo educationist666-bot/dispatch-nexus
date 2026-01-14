@@ -128,3 +128,13 @@ LOGOUT_REDIRECT_URL = 'home'
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# SECURITY SETTINGS FOR RENDER
+CSRF_TRUSTED_ORIGINS = [
+    'https://dispatch-nexus.onrender.com', 
+   
+]
+
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True

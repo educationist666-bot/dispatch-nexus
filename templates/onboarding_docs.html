@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Compliance Check | DispatchNexus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>body { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; align-items: center; justify-content: center; }</style>
+</head>
+<body>
+    <div class="card p-5 shadow-lg border-0" style="width: 600px; border-radius: 15px;">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">🛡️ Compliance Check</h2>
+            <p class="text-muted">To activate your account, we must verify your authority.</p>
+        </div>
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <h6 class="text-primary fw-bold mb-3 border-bottom pb-2">1. MC Authority</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-7">
+                    <label class="form-label small fw-bold text-muted">Upload Document</label>
+                    {{ form.authority_doc }}
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold text-muted">Expiry Date</label>
+                    {{ form.authority_expiry }}
+                </div>
+            </div>
+
+            <h6 class="text-primary fw-bold mb-3 border-bottom pb-2">2. Insurance Certificate</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-7">
+                    <label class="form-label small fw-bold text-muted">Upload Document</label>
+                    {{ form.insurance_doc }}
+                </div>
+                <div class="col-md-5">
+                    <label class="form-label small fw-bold text-muted">Expiry Date</label>
+                    {{ form.insurance_expiry }}
+                </div>
+            </div>
+
+            <h6 class="text-primary fw-bold mb-3 border-bottom pb-2">3. Tax Info</h6>
+            <div class="mb-4">
+                <label class="form-label small fw-bold text-muted">W-9 Form</label>
+                {{ form.w9_doc }}
+            </div>
+
+            <button type="submit" class="btn btn-dark w-100 py-3 fw-bold fs-5">Submit & Continue →</button>
+        </form>
+    </div>
+</body>
+</html>

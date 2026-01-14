@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Fleet Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>body{background-color:#f8fafc;font-family:'Segoe UI',sans-serif;}</style>
+</head>
+<body class="p-4">
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3>🚛 Fleet Manager</h3>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">← Dashboard</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card p-4 shadow-sm border-0">
+                <h5 class="fw-bold mb-3">Add New Unit</h5>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    
+                    <div class="row g-2">
+                        <div class="col-6"><label class="small fw-bold">Driver Name</label>{{ form.name }}</div>
+                        <div class="col-6"><label class="small fw-bold">Phone</label>{{ form.phone }}</div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded my-3 border">
+                        <h6 class="text-primary fw-bold small m-0 mb-2">👤 DRIVER DOCUMENTS</h6>
+                        <div class="mb-2"><small>CDL License</small>{{ form.cdl }}</div>
+                        <div class="mb-2"><small>Medical Card</small>{{ form.medical_card }}</div>
+                        <div class="mb-2"><small>W-9 Form</small>{{ form.w9_form }}</div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-6"><label class="small fw-bold">Truck Unit #</label>{{ form.truck_number }}</div>
+                        <div class="col-6"><label class="small fw-bold">Status</label>{{ form.status }}</div>
+                    </div>
+
+                    <div class="p-3 bg-light rounded my-3 border">
+                        <h6 class="text-success fw-bold small m-0 mb-2">🚛 TRUCK DOCUMENTS</h6>
+                        <div class="mb-2"><small>Registration</small>{{ form.registration }}</div>
+                        <div class="mb-2"><small>Insurance (COI)</small>{{ form.insurance_cert }}</div>
+                        <div class="mb-2"><small>IFTA Sticker</small>{{ form.ifta_sticker }}</div>
+                    </div>
+
+                    <button class="btn btn-dark w-100 mt-2">Save Unit</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-4 shadow-sm border-0">
+                <h5 class="fw-bold mb-3">Active Fleet</h5>
+                <table class="table">
+                    <thead><tr><th>Unit</th><th>Driver</th><th>Status</th></tr></thead>
+                    <tbody>
+                        {% for driver in drivers %}
+                        <tr>
+                            <td class="fw-bold">{{ driver.truck_number }}</td>
+                            <td>{{ driver.name }}</td>
+                            <td>{{ driver.get_status_display }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Company Settings | DispatchNexus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f1f5f9; font-family: 'Segoe UI', sans-serif; padding: 40px; }
+        .settings-card { background: white; padding: 40px; border-radius: 15px; max-width: 800px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .section-title { color: #0f172a; font-weight: 700; margin-top: 30px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; }
+        .doc-preview { font-size: 0.8rem; color: #059669; font-weight: 600; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="settings-card">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold m-0">⚙️ Company Profile & Compliance</h3>
+        <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="section-title">🏢 Business Identity</div>
+        <div class="row g-3">
+            <div class="col-md-8">
+                <label class="form-label small fw-bold">Company Legal Name</label>
+                {{ form.name }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">Company Logo</label>
+                {{ form.logo }}
+            </div>
+            <div class="col-md-12">
+                <label class="form-label small fw-bold">Office Address</label>
+                {{ form.address }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">City</label>
+                {{ form.city }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">State</label>
+                {{ form.state }}
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small fw-bold">Zip Code</label>
+                {{ form.zip_code }}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small fw-bold">Business Phone</label>
+                {{ form.phone }}
+            </div>
+        </div>
+
+        <div class="section-title">📄 My Compliance Documents</div>
+        <p class="text-muted small mb-4">These documents will be stored in your Document Box for quick access when brokers ask for them.</p>
+        
+        <div class="row g-4">
+            <div class="col-md-6">
+                <label class="form-label small fw-bold">MC Authority Document</label>
+                {{ form.authority_doc }}
+                {% if company.authority_doc %}
+                    <div class="doc-preview text-success">✅ File on record</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <label class="form-label small fw-bold">W-9 Form (Signed)</label>
+                {{ form.w9_doc }}
+                {% if company.w9_doc %}
+                    <div class="doc-preview text-success">✅ File on record</div>
+                {% endif %}
+            </div>
+            <div class="col-md-12">
+                <label class="form-label small fw-bold">Insurance Certificate (COI)</label>
+                {{ form.insurance_doc }}
+                {% if company.insurance_doc %}
+                    <div class="doc-preview text-success">✅ File on record</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="mt-5 border-top pt-4">
+            <button type="submit" class="btn btn-primary px-5 py-2 fw-bold">Save All Changes</button>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

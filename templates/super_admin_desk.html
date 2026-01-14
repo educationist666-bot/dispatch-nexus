@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>HQ Command | DispatchNexus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background: #080c14; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; }
+        .sidebar-hq { width: 280px; height: 100vh; background: #0f172a; position: fixed; padding: 30px; border-right: 1px solid #1e293b; }
+        .main-hq { margin-left: 280px; padding: 40px; }
+        .stat-box { background: #111827; border: 1px solid #1e293b; padding: 25px; border-radius: 12px; }
+        .receipt-img { height: 40px; border: 1px solid #555; transition: 0.3s; cursor: zoom-in; }
+        .receipt-img:hover { transform: scale(4); border-color: white; position: relative; z-index: 99; }
+        .user-badge { font-size: 0.8rem; background: rgba(59, 130, 246, 0.2); color: #60a5fa; padding: 2px 8px; border-radius: 4px; border: 1px solid rgba(59, 130, 246, 0.3); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar-hq">
+    <h3 class="fw-bold text-warning mb-5">⚡ Nexus HQ</h3>
+    <div class="nav flex-column gap-3">
+        <span class="text-white fw-bold">📉 Platform Overview</span>
+        <span class="text-white-50">Active Users: <strong class="text-white">{{ total_active }}</strong></span>
+        <span class="text-white-50">Revenue: <strong class="text-success">${{ revenue }}</strong></span>
+        <hr class="border-secondary">
+        <a href="{% url 'logout' %}" class="text-danger text-decoration-none fw-bold">Exit & Logout</a>
+    </div>
+</div>
+
+<div class="main-hq">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="fw-bold">Platform Command Center</h2>
+        <span class="badge bg-success">SYSTEM ONLINE</span>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4"><div class="stat-box border-primary border-start border-4"><small class="text-white-50 text-uppercase fw-bold">Total Clients</small><h2 class="fw-bold mt-2 text-white">{{ total_active }}</h2></div></div>
+        <div class="col-md-4"><div class="stat-box border-success border-start border-4"><small class="text-white-50 text-uppercase fw-bold">MRR</small><h2 class="fw-bold mt-2 text-success">${{ revenue }}</h2></div></div>
+        <div class="col-md-4"><div class="stat-box border-warning border-start border-4"><small class="text-white-50 text-uppercase fw-bold">Pending</small><h2 class="fw-bold mt-2 text-warning">{{ pending.count }}</h2></div></div>
+    </div>
+
+    {% if pending %}
+    <h5 class="fw-bold mb-3 text-warning">🚨 Pending Approvals</h5>
+    <div class="card border-0 mb-5" style="background: #111827; overflow: hidden; border-radius: 12px;">
+        <table class="table table-dark table-hover mb-0 align-middle">
+            <thead class="text-white-50 small text-uppercase"><tr><th class="p-3">Company</th><th>Plan</th><th>Receipt</th><th>Action</th></tr></thead>
+            <tbody>
+                {% for c in pending %}
+                <tr>
+                    <td class="p-3"><strong class="text-white">{{ c.name }}</strong><br><span class="user-badge">User: {{ c.owner.username }}</span></td>
+                    <td><span class="badge bg-primary">{{ c.get_plan_type_display }}</span></td>
+                    <td>{% if c.payment_receipt %}<a href="{{ c.payment_receipt.url }}" target="_blank"><img src="{{ c.payment_receipt.url }}" class="receipt-img"></a>{% endif %}</td>
+                    <td><a href="{% url 'approve_company' c.id %}" class="btn btn-success btn-sm fw-bold">Approve ✅</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    <h5 class="fw-bold mb-3 text-white">✅ Active Subscriber Database</h5>
+    <div class="card border-0" style="background: #111827; overflow: hidden; border-radius: 12px;">
+        <table class="table table-dark table-hover mb-0 align-middle">
+            <thead class="text-white-50 small text-uppercase">
+                <tr>
+                    <th class="p-3">Company</th>
+                    <th>Plan</th>
+                    <th>Time Left</th>
+                    <th class="text-end p-3">Controls</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in active %}
+                <tr>
+                    <td class="p-3"><strong class="text-white">{{ c.name }}</strong><br><span class="user-badge">User: {{ c.owner.username }}</span></td>
+                    <td>
+                        {% if c.plan_type == 'starter' %}<span class="badge bg-secondary">Starter</span>
+                        {% elif c.plan_type == 'pro' %}<span class="badge bg-primary">Pro</span>
+                        {% else %}<span class="badge bg-warning text-dark">Enterprise</span>{% endif %}
+                    </td>
+                    <td><span class="text-success">{{ c.days_remaining }} Days</span></td>
+                    <td class="text-end p-3">
+                        <a href="{% url 'pause_company' c.id %}" class="btn btn-warning btn-sm" title="Pause Access">⏸</a>
+                        <a href="{% url 'delete_company' c.id %}" class="btn btn-danger btn-sm" title="Delete Account" onclick="return confirm('Are you sure? This deletes everything!');">🗑</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="text-center py-4 text-muted">No active subscribers.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

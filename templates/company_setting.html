@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Company Settings | DispatchNexus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>body{background-color:#f1f5f9;font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;}.form-card{background:white;padding:40px;border-radius:15px;width:500px;box-shadow:0 10px 30px rgba(0,0,0,0.05);}</style>
+</head>
+<body>
+<div class="form-card">
+    <div class="d-flex justify-content-between align-items-center mb-4"><h3 class="fw-bold m-0">🏢 Company Docs</h3><a href="{% url 'document_center' %}" class="btn-close"></a></div>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label fw-bold">Company Name</label>
+            {{ form.name }}
+        </div>
+        <div class="mb-3">
+            <label class="form-label fw-bold">Company Logo</label>
+            {{ form.logo }}
+        </div>
+        <hr>
+        <h6 class="text-primary fw-bold">Compliance Documents</h6>
+        <div class="mb-2"><label class="small text-muted">MC Authority</label>{{ form.authority_doc }}</div>
+        <div class="mb-2"><label class="small text-muted">W-9 Form</label>{{ form.w9_doc }}</div>
+        <div class="mb-2"><label class="small text-muted">Insurance Cert</label>{{ form.insurance_doc }}</div>
+        
+        <button type="submit" class="btn btn-primary w-100 mt-4">Save Documents</button>
+    </form>
+</div>
+</body>
+</html>

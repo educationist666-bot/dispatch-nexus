@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Owner Portal | {{ company.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8fafc; font-family: 'Segoe UI', sans-serif; }
+        
+        /* HEADER */
+        .top-bar { background: #fff; padding: 20px 0; border-bottom: 1px solid #e2e8f0; margin-bottom: 40px; }
+        
+        /* MONEY CARD */
+        .balance-card { 
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%); 
+            color: white; 
+            padding: 50px; 
+            border-radius: 20px; 
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15); 
+            margin-bottom: 40px;
+        }
+        
+        /* TABLE BADGES */
+        .status-badge { font-size: 0.75rem; padding: 6px 12px; border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .bg-booked { background: #eff6ff; color: #1d4ed8; }     /* Blue */
+        .bg-delivered { background: #f0fdf4; color: #15803d; }  /* Green */
+        .bg-invoiced { background: #fff7ed; color: #c2410c; }   /* Orange */
+        .bg-paid { background: #ecfccb; color: #3f6212; }       /* Lime */
+    </style>
+</head>
+<body>
+
+<div class="top-bar">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h4 class="fw-bold m-0 text-dark">
+            🚚 {{ company.name }} 
+            <span class="text-muted fw-normal ms-2" style="font-size: 0.9rem;">| Owner Portal</span>
+        </h4>
+        <a href="/accounts/logout/" class="btn btn-outline-danger btn-sm px-4">Log Out</a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        
+        <div class="col-lg-10">
+            <div class="balance-card text-center">
+                <p class="text-white-50 mb-2 text-uppercase fw-bold ls-1">Total Gross Revenue</p>
+                <h1 class="display-2 fw-bold mb-3">${{ total_revenue }}</h1>
+                <p class="text-white-50 m-0 small">Includes all active and delivered loads.</p>
+            </div>
+        </div>
+
+        <div class="col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold text-secondary m-0">Recent Activity</h5>
+                <span class="badge bg-secondary">{{ active_loads.count }} Loads</span>
+            </div>
+            
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="bg-light text-muted small text-uppercase">
+                            <tr>
+                                <th class="ps-4 py-3">Route Details</th>
+                                <th class="py-3">Date</th>
+                                <th class="py-3">Amount</th>
+                                <th class="py-3 text-end pe-4">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for load in active_loads %}
+                            <tr>
+                                <td class="ps-4 py-3 align-middle">
+                                    <div class="fw-bold text-dark">{{ load.origin }} ➝ {{ load.destination }}</div>
+                                    <div class="small text-muted">Ref: {{ load.load_ref }}</div>
+                                </td>
+                                <td class="align-middle text-muted">{{ load.pickup_date }}</td>
+                                <td class="align-middle fw-bold text-dark">${{ load.rate }}</td>
+                                <td class="align-middle text-end pe-4">
+                                    {% if load.status == 'booked' %}<span class="status-badge bg-booked">On Road</span>{% endif %}
+                                    {% if load.status == 'picked_up' %}<span class="status-badge bg-booked">Picked Up</span>{% endif %}
+                                    {% if load.status == 'delivered' %}<span class="status-badge bg-delivered">Delivered</span>{% endif %}
+                                    {% if load.status == 'invoiced' %}<span class="status-badge bg-invoiced">Invoiced</span>{% endif %}
+                                    {% if load.status == 'paid' %}<span class="status-badge bg-paid">Paid</span>{% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">
+                                    No loads found. Your dispatcher is working on it!
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Edit Load | DispatchNexus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>body{background-color:#f1f5f9;font-family:'Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;}.form-card{background:white;padding:40px;border-radius:15px;width:600px;}.btn-primary{background-color:#0f172a;border:none;width:100%;padding:12px;}</style>
+</head>
+<body>
+<div class="form-card">
+    <div class="d-flex justify-content-between align-items-center mb-4"><h3 class="fw-bold m-0">✏️ Edit Load</h3><a href="{% url 'dashboard' %}" class="btn-close"></a></div>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row g-3">
+            <div class="col-12"><h6 class="text-primary fw-bold mb-0">🏢 Broker Details</h6><hr class="mt-1"></div>
+            <div class="col-md-4"><label class="small fw-bold text-muted">Broker Name</label>{{ form.broker_name }}</div>
+            <div class="col-md-4"><label class="small fw-bold text-muted">MC Number</label>{{ form.broker_mc }}</div>
+            <div class="col-md-4"><label class="small fw-bold text-muted">Load Ref #</label>{{ form.load_ref }}</div>
+            
+            <div class="col-12">
+                <label class="small fw-bold text-muted">📎 Update Rate Confirmation</label>
+                {{ form.rate_confirmation }}
+                {% if load.rate_confirmation %}
+                    <div class="small text-success mt-1">✅ Current File: <a href="{{ load.rate_confirmation.url }}" target="_blank">View PDF</a></div>
+                {% endif %}
+            </div>
+
+            <div class="col-12"><h6 class="text-primary fw-bold mb-0 mt-3">📍 Route & Pay</h6><hr class="mt-1"></div>
+            <div class="col-md-6"><label class="small fw-bold text-muted">Origin</label>{{ form.origin }}</div>
+            <div class="col-md-6"><label class="small fw-bold text-muted">Destination</label>{{ form.destination }}</div>
+            <div class="col-md-6"><label class="small fw-bold text-muted">Pickup Date</label>{{ form.pickup_date }}</div>
+            <div class="col-md-6"><label class="small fw-bold text-muted">Driver</label>{{ form.driver }}</div>
+            <div class="col-md-6"><label class="small fw-bold text-muted">Rate ($)</label>{{ form.rate }}</div>
+            <div class="col-md-6"><label class="small fw-bold text-muted">Miles</label>{{ form.miles }}</div>
+        </div>
+        <button type="submit" class="btn btn-primary mt-4">💾 Save Changes</button>
+        <div class="text-center mt-3"><a href="{% url 'delete_load' load.id %}" class="text-danger small fw-bold text-decoration-none">🗑️ Delete this Load</a></div>
+    </form>
+</div>
+</body>
+</html>

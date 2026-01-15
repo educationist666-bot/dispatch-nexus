@@ -12,7 +12,7 @@ urlpatterns = [
     # Public Pages
     path('', views.home, name='home'),
     path('portal/', views.portal_choice, name='portal_choice'),
-    path('plans/', views.public_plans, name='plans'),  # Fixed: name matches template link
+    path('plans/', views.public_plans, name='plans'),
     path('contact-us/', views.contact_us, name='contact_us'),
     path('refund-policy/', views.refund_policy, name='refund_policy'),
     path('register/', views.register, name='register'),
@@ -22,11 +22,12 @@ urlpatterns = [
     path('subscription/', views.subscription_plans, name='subscription_plans'),
     path('pay/', views.process_payment, name='process_payment'),
     
-    # HQ Admin Control
+    # HQ Admin Control (REPAIRED)
     path('nexus-hq-control/', views.super_admin_desk, name='super_admin_desk'),
     path('hq/approve/<int:company_id>/', views.approve_company, name='approve_company'),
     path('hq/pause/<int:company_id>/', views.pause_company, name='pause_company'),
     path('hq/delete/<int:company_id>/', views.delete_company, name='delete_company'),
+    path('hq/edit-access/<int:company_id>/', views.edit_access_days, name='edit_access_days'), # <--- THIS LINE FIXES THE ERROR
     
     # Dispatcher Operations
     path('dashboard/', views.dashboard, name='dashboard'),

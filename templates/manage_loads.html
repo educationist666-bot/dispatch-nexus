@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+        <div>
+            <h2 class="fw-bold text-white mb-1">Load Board</h2>
+            <p class="text-white-50">Manage active shipments and update status in real-time.</p>
+        </div>
+        <a href="{% url 'add_load' %}" class="btn btn-primary fw-bold px-4 rounded-pill shadow-lg">
+            <i class="fas fa-plus me-2"></i> Book New Load
+        </a>
+    </div>
+
+    <div class="card overflow-hidden shadow-lg border-0">
+        <div class="card-header bg-dark py-3 border-bottom border-secondary border-opacity-25">
+            <h5 class="text-white mb-0"><i class="fas fa-tasks text-warning me-2"></i> Active Operations</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-dark-luxury align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Ref #</th>
+                        <th>Driver</th>
+                        <th>Route</th>
+                        <th>Current Status</th>
+                        <th>Action / Update</th>
+                        <th class="text-end pe-4">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for load in loads %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-primary">{{ load.load_ref }}</td>
+                        <td class="text-white">{{ load.driver.name }} <br> <small class="text-muted">Unit {{ load.driver.truck_number }}</small></td>
+                        <td class="text-white-50 small">
+                            <i class="fas fa-circle text-success" style="font-size: 6px;"></i> {{ load.origin }}<br>
+                            <i class="fas fa-circle text-danger" style="font-size: 6px;"></i> {{ load.destination }}
+                        </td>
+                        <td>
+                            {% if load.status == 'booked' %}
+                                <span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-25 rounded-pill px-3">Booked</span>
+                            {% elif load.status == 'active' %}
+                                <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 rounded-pill px-3">In Transit</span>
+                            {% elif load.status == 'delivered' %}
+                                <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 rounded-pill px-3">Delivered</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="post" class="d-flex gap-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="load_id" value="{{ load.id }}">
+                                
+                                {% if load.status == 'booked' %}
+                                    <button type="submit" name="new_status" value="active" class="btn btn-sm btn-outline-warning rounded-pill">
+                                        <i class="fas fa-truck-moving me-1"></i> Start Trip
+                                    </button>
+                                {% elif load.status == 'active' %}
+                                    <button type="submit" name="new_status" value="delivered" class="btn btn-sm btn-outline-success rounded-pill">
+                                        <i class="fas fa-check me-1"></i> Mark Delivered
+                                    </button>
+                                {% elif load.status == 'delivered' %}
+                                    <button type="submit" name="new_status" value="paid" class="btn btn-sm btn-outline-light rounded-pill">
+                                        <i class="fas fa-dollar-sign me-1"></i> Mark Paid
+                                    </button>
+                                {% endif %}
+                            </form>
+                        </td>
+                        <td class="text-end pe-4">
+                            <a href="{% url 'edit_load' load.id %}" class="btn btn-sm btn-dark text-white-50"><i class="fas fa-edit"></i></a>
+                            <a href="{% url 'generate_invoice' load.id %}" class="btn btn-sm btn-dark text-white-50"><i class="fas fa-file-invoice"></i></a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted">
+                            <i class="fas fa-road fa-2x mb-3 opacity-25"></i><br>
+                            No active loads. <a href="{% url 'add_load' %}" class="text-primary">Book one now.</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

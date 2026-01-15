@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DispatchNexus | Command Center</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* 1. DEEP DARK BACKGROUND */
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0f172a; /* Midnight Blue */
+            color: #e2e8f0; /* Soft White Text */
+        }
+
+        /* 2. SIDEBAR STYLING */
+        .sidebar-luxury {
+            background: linear-gradient(180deg, #020617 0%, #0f172a 100%);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            min-height: 100vh;
+            width: 280px;
+        }
+        .nav-link-luxury {
+            color: #94a3b8;
+            border-radius: 12px;
+            margin-bottom: 5px;
+            transition: all 0.2s;
+            font-weight: 500;
+            padding: 12px 20px;
+        }
+        .nav-link-luxury:hover, .nav-link-luxury.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+        }
+
+        /* 3. AUTOMATIC DARK MODE FOR CARDS & FORMS */
+        .card {
+            background: rgba(30, 41, 59, 0.7) !important; /* Glass Effect */
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+        .card-header {
+            background: transparent !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Force Inputs to be Dark */
+        .form-control, .form-select {
+            background-color: #1e293b !important;
+            border: 1px solid #334155 !important;
+            color: #fff !important;
+        }
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3);
+            border-color: #2563eb;
+        }
+        
+        /* Tables */
+        .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: #cbd5e1;
+            border-color: rgba(255,255,255,0.1);
+        }
+        .table thead {
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+        }
+
+        /* Overrides for text visibility */
+        .text-dark { color: #fff !important; }
+        .text-muted { color: #94a3b8 !important; }
+        .bg-white { background-color: #1e293b !important; }
+        .bg-light { background-color: #0f172a !important; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body>
+
+    <div class="d-flex w-100">
+        
+        {% if user.is_authenticated %}
+        <div class="d-flex flex-column flex-shrink-0 p-4 sidebar-luxury d-none d-lg-flex">
+            
+            <a href="/" class="d-flex align-items-center mb-5 text-decoration-none">
+                <div class="rounded-circle d-flex align-items-center justify-content-center me-3" 
+                     style="width: 48px; height: 48px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 0 20px rgba(37, 99, 235, 0.5);">
+                    <i class="fas fa-rocket text-white fa-lg"></i>
+                </div>
+                <div>
+                    <h5 class="fw-bold text-white mb-0" style="letter-spacing: -0.5px;">DispatchNexus</h5>
+                    <small class="text-white-50" style="font-size: 0.7rem;">{{ user.userprofile.company.name|default:"Command Center" }}</small>
+                </div>
+            </a>
+
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item"><a href="{% url 'dashboard' %}" class="nav-link nav-link-luxury"><i class="fas fa-home me-3"></i>Dashboard</a></li>
+                <li><a href="{% url 'manage_loads' %}" class="nav-link nav-link-luxury"><i class="fas fa-tasks me-3"></i>Manage Loads</a></li>
+                <li><a href="{% url 'manage_fleet' %}" class="nav-link nav-link-luxury"><i class="fas fa-truck-moving me-3"></i>Fleet Manager</a></li>
+                <li><a href="{% url 'document_center' %}" class="nav-link nav-link-luxury"><i class="fas fa-folder-open me-3"></i>Document Box</a></li>
+                <li><a href="{% url 'add_load' %}" class="nav-link nav-link-luxury"><i class="fas fa-plus-circle me-3"></i>Book Load</a></li>
+                <li><a href="{% url 'manage_clients' %}" class="nav-link nav-link-luxury"><i class="fas fa-users-cog me-3"></i>Owner Logins</a></li>
+                <li><a href="{% url 'company_settings' %}" class="nav-link nav-link-luxury"><i class="fas fa-sliders-h me-3"></i>Settings</a></li>
+            </ul>
+
+            <div class="mt-auto pt-4 border-top border-secondary border-opacity-25 text-center">
+                <p class="text-white-50 small mb-2" style="font-size: 0.7rem;">Powered by <strong class="text-white">DispatchNexus</strong></p>
+                <a href="{% url 'logout' %}" class="btn btn-sm btn-outline-danger w-100 rounded-pill"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="flex-grow-1 p-4" style="height: 100vh; overflow-y: auto;">
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-lg border-0" 
+                         style="background: rgba(30, 41, 59, 0.95); color: #fff; border-left: 4px solid #3b82f6;" role="alert">
+                        <i class="fas fa-info-circle me-2"></i> {{ message }}
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% block content %}
+            {% endblock %}
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

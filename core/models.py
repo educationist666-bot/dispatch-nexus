@@ -2,71 +2,71 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
 
-# --- 1. USER PROFILE ---
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    role = models.CharField(max_length=20, default='dispatcher')  
-    plan_type = models.CharField(max_length=20, default='starter')
-
-    def __str__(self):
-        return self.user.username
-
-# --- 2. COMPANY SETTINGS ---
+# --- 1. COMPANY (The Tenant) ---
 class Company(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, default="My Logistics Co")
-    logo = models.ImageField(upload_to='logos/', blank=True, null=True)
-    subscription_status = models.CharField(max_length=20, default='active')
-    days_remaining = models.IntegerField(default=14)
+    # The owner who registered the company
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='owned_company')
+    name = models.CharField(max_length=100, default="New Logistics Co")
+    
+    # Subscription & Approval Logic
+    plan_type = models.CharField(max_length=20, choices=[
+        ('starter', 'Starter ($0)'),
+        ('pro', 'Pro ($50)'),
+        ('enterprise', 'Enterprise ($100)')
+    ], default='starter')
+    is_approved = models.BooleanField(default=False) # HQ must approve this
+    
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
 
-# --- 3. DRIVER MODEL ---
+# --- 2. USER PROFILE (Staff/Employees) ---
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    # Link user to a specific company so they only see THAT company's data
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, null=True, blank=True)
+    
+    role = models.CharField(max_length=20, choices=[
+        ('hq_admin', 'HQ Admin'), # Superuser/Approver
+        ('dispatcher', 'Dispatcher'),
+        ('owner', 'Truck Owner'),
+        ('driver', 'Driver')
+    ], default='dispatcher')
+
+    def __str__(self):
+        return f"{self.user.username} ({self.role})"
+
+# --- 3. ASSETS (Isolated by Company) ---
+# All models below have a 'company' field. 
+# This guarantees Company A never sees Company B's trucks.
+
 class Driver(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE) # Data Isolation
     name = models.CharField(max_length=100)
     phone = models.CharField(max_length=20, blank=True)
-    email = models.EmailField(blank=True)
-    license_number = models.CharField(max_length=50, blank=True)
     status = models.CharField(max_length=20, default='Active')
     
     def __str__(self):
         return self.name
 
-# --- 4. TRUCK MODEL ---
 class Truck(models.Model):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE) # Data Isolation
     unit_number = models.CharField(max_length=20)
     driver = models.ForeignKey(Driver, on_delete=models.SET_NULL, null=True, blank=True)
-    type = models.CharField(max_length=50, choices=[
-        ('Dry Van', 'Dry Van'), 
-        ('Reefer', 'Reefer'), 
-        ('Flatbed', 'Flatbed')
-    ], default='Dry Van')
+    type = models.CharField(max_length=50, default='Dry Van')
     status = models.CharField(max_length=20, default='Active') 
 
     def __str__(self):
-        return f"Unit {self.unit_number}"
+        return f"{self.unit_number} ({self.company.name})"
 
-# --- 5. LOAD MODEL ---
 class Load(models.Model):
-    load_ref = models.CharField(max_length=50, verbose_name="Load Reference")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE) # Data Isolation
+    load_ref = models.CharField(max_length=50)
     origin = models.CharField(max_length=100)
     destination = models.CharField(max_length=100)
-    pickup_date = models.DateField(default=timezone.now) 
-    
     rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    expenses = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    
-    status = models.CharField(max_length=20, choices=[
-        ('booked', 'Booked'),
-        ('active', 'In Transit'),
-        ('delivered', 'Delivered'),
-        ('cancelled', 'Cancelled')
-    ], default='booked')
-
-    @property
-    def net_profit(self):
-        return self.rate - self.expenses
+    status = models.CharField(max_length=20, default='booked')
 
     def __str__(self):
-        return f"{self.load_ref}: {self.origin} -> {self.destination}"
+        return self.load_ref

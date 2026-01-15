@@ -68,9 +68,39 @@ def process_payment(request):
 # --- HQ ADMIN ---
 @user_passes_test(lambda u: u.is_superuser)
 def super_admin_desk(request):
+    # Fetch lists
     pending = Company.objects.filter(is_active=False).exclude(payment_submitted_at__isnull=True)
     active = Company.objects.filter(is_active=True)
-    return render(request, 'super_admin_desk.html', {'pending': pending, 'active': active})
+    
+    # 1. Calculate Total Clients
+    total_clients = active.count()
+    
+    # 2. Calculate MRR (Monthly Recurring Revenue)
+    # Match these strings to your choice in subscription_plans.html
+    plan_prices = {
+        'starter': 99,
+        'pro': 199,
+        'enterprise': 499
+    }
+    
+    mrr = 0
+    for company in active:
+        # Normalize plan name to lowercase to match dictionary keys
+        plan_name = str(company.plan_type).lower()
+        mrr += plan_prices.get(plan_name, 0)
+
+    stats = {
+        'total_clients': total_clients,
+        'mrr': mrr,
+        'pending_count': pending.count(),
+        'total_companies': Company.objects.count()
+    }
+
+    return render(request, 'super_admin_desk.html', {
+        'pending': pending, 
+        'active': active, 
+        'stats': stats
+    })
 
 @user_passes_test(lambda u: u.is_superuser)
 def approve_company(request, company_id):

@@ -4,57 +4,41 @@
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h1 class="fw-bold text-white mb-1"><i class="fas fa-shield-alt text-primary me-2"></i>Platform Command Center</h1>
-            <p class="text-white-50">Global Oversight & Financial Performance</p>
-        </div>
-        <div class="text-end">
-            <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill">
-                <i class="fas fa-circle fa-xs me-2"></i>System Online
-            </span>
+            <h1 class="fw-bold text-white mb-1">Nexus HQ Control</h1>
+            <p class="text-white-50">Global Oversight & User Management</p>
         </div>
     </div>
 
     <div class="row g-4 mb-5">
-        <div class="col-md-3">
-            <div class="card p-4 h-100 border-0 bg-dark shadow-lg">
-                <small class="text-uppercase text-white-50 fw-bold">Total Clients</small>
-                <h2 class="text-white display-6 fw-bold mt-2 mb-0">{{ stats.total_clients }}</h2>
-                <div class="mt-2 text-success small"><i class="fas fa-arrow-up me-1"></i> Active Subscribers</div>
+        <div class="col-md-4">
+            <div class="card p-4 border-0 bg-dark shadow-lg">
+                <small class="text-uppercase text-white-50 fw-bold">Active Clients</small>
+                <h2 class="text-white display-6 fw-bold mt-2">{{ stats.total_clients }}</h2>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card p-4 h-100 border-0 bg-dark shadow-lg" style="border-left: 4px solid #10b981 !important;">
+        <div class="col-md-4">
+            <div class="card p-4 border-0 bg-dark shadow-lg" style="border-left: 4px solid #10b981 !important;">
                 <small class="text-uppercase text-white-50 fw-bold">Monthly Revenue (MRR)</small>
-                <h2 class="text-success display-6 fw-bold mt-2 mb-0">${{ stats.mrr }}</h2>
-                <div class="mt-2 text-white-50 small">Projected Monthly Income</div>
+                <h2 class="text-success display-6 fw-bold mt-2">${{ stats.mrr }}</h2>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card p-4 h-100 border-0 bg-dark shadow-lg">
+        <div class="col-md-4">
+            <div class="card p-4 border-0 bg-dark shadow-lg">
                 <small class="text-uppercase text-white-50 fw-bold">Pending Approval</small>
-                <h2 class="text-warning display-6 fw-bold mt-2 mb-0">{{ stats.pending_count }}</h2>
-                <div class="mt-2 text-white-50 small">Awaiting Verification</div>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card p-4 h-100 border-0 bg-dark shadow-lg">
-                <small class="text-uppercase text-white-50 fw-bold">Total Registered</small>
-                <h2 class="text-primary display-6 fw-bold mt-2 mb-0">{{ stats.total_companies }}</h2>
-                <div class="mt-2 text-white-50 small">Historical Signups</div>
+                <h2 class="text-warning display-6 fw-bold mt-2">{{ stats.pending_count }}</h2>
             </div>
         </div>
     </div>
 
     <div class="card border-0 shadow-lg mb-5">
         <div class="card-header py-3 border-bottom border-secondary border-opacity-25">
-            <h5 class="text-white mb-0"><i class="fas fa-hourglass-half text-warning me-2"></i> Pending Access Requests</h5>
+            <h5 class="text-white mb-0"><i class="fas fa-hourglass-half text-warning me-2"></i> Pending Requests</h5>
         </div>
         <div class="table-responsive">
-            <table class="table table-dark table-hover align-middle mb-0">
+            <table class="table table-dark align-middle mb-0">
                 <thead>
                     <tr>
-                        <th class="ps-4">Company Name</th>
-                        <th>Owner</th>
+                        <th class="ps-4">Company (Username)</th>
                         <th>Plan</th>
                         <th>Receipt</th>
                         <th class="text-end pe-4">Actions</th>
@@ -63,23 +47,15 @@
                 <tbody>
                     {% for c in pending %}
                     <tr>
-                        <td class="ps-4 fw-bold">{{ c.name }}</td>
-                        <td>{{ c.owner.email }}</td>
-                        <td><span class="badge bg-primary">{{ c.plan_type }}</span></td>
-                        <td>
-                            {% if c.payment_receipt %}
-                                <a href="{{ c.payment_receipt.url }}" target="_blank" class="btn btn-sm btn-outline-info">View Receipt</a>
-                            {% else %}
-                                <span class="text-muted small">No Receipt</span>
-                            {% endif %}
-                        </td>
+                        <td class="ps-4">
+                            <span class="fw-bold d-block">{{ c.name }}</span>
+                            <small class="text-primary">User: {{ c.owner.username }}</small> </td>
+                        <td><span class="badge bg-primary text-uppercase">{{ c.plan_type }}</span></td>
+                        <td><a href="{{ c.payment_receipt.url }}" target="_blank" class="btn btn-sm btn-outline-info">View</a></td>
                         <td class="text-end pe-4">
-                            <a href="{% url 'approve_company' c.id %}" class="btn btn-sm btn-success px-3 rounded-pill">Approve</a>
-                            <a href="{% url 'delete_company' c.id %}" class="btn btn-sm btn-outline-danger px-3 rounded-pill ms-2">Reject</a>
+                            <a href="{% url 'approve_company' c.id %}" class="btn btn-sm btn-success rounded-pill px-3">Approve</a>
                         </td>
                     </tr>
-                    {% empty %}
-                    <tr><td colspan="5" class="text-center py-5 text-muted">No pending requests at this time.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -88,34 +64,41 @@
 
     <div class="card border-0 shadow-lg">
         <div class="card-header py-3 border-bottom border-secondary border-opacity-25">
-            <h5 class="text-white mb-0"><i class="fas fa-check-circle text-success me-2"></i> Active Partners</h5>
+            <h5 class="text-white mb-0"><i class="fas fa-check-circle text-success me-2"></i> Active Subscriber Database</h5>
         </div>
         <div class="table-responsive">
-            <table class="table table-dark table-hover align-middle mb-0">
+            <table class="table table-dark align-middle mb-0">
                 <thead>
                     <tr>
-                        <th class="ps-4">Client ID</th>
-                        <th>Company Name</th>
-                        <th>Billing Cycle</th>
-                        <th>Plan Value</th>
-                        <th class="text-end pe-4">Management</th>
+                        <th class="ps-4">Company (Username)</th>
+                        <th>Days Left</th>
+                        <th>Adjust Access</th>
+                        <th class="text-end pe-4">Controls</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for c in active %}
                     <tr>
-                        <td class="ps-4 text-white-50 small">#DX-00{{ c.id }}</td>
-                        <td class="fw-bold">{{ c.name }}</td>
+                        <td class="ps-4">
+                            <span class="fw-bold d-block">{{ c.name }}</span>
+                            <small class="text-primary">User: {{ c.owner.username }}</small> </td>
                         <td>
-                            <span class="text-white-50 small">Renews: {{ c.subscription_end_date|date:"M d, Y" }}</span>
+                            <span class="badge bg-opacity-10 {% if c.days_remaining < 5 %}bg-danger text-danger{% else %}bg-success text-success{% endif %}">
+                                {{ c.days_remaining }} Days
+                            </span>
                         </td>
-                        <td class="text-success fw-bold">${{ c.plan_type }} Plan</td>
+                        <td>
+                            <form action="{% url 'edit_access_days' c.id %}" method="POST" class="d-flex gap-2">
+                                {% csrf_token %}
+                                <input type="number" name="days" placeholder="+/- Days" class="form-control form-control-sm w-50 bg-dark text-white border-secondary">
+                                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                            </form>
+                        </td>
                         <td class="text-end pe-4">
-                            <a href="{% url 'pause_company' c.id %}" class="btn btn-sm btn-outline-warning">Pause Access</a>
+                            <a href="{% url 'pause_company' c.id %}" class="btn btn-sm btn-warning rounded-circle" title="Pause"><i class="fas fa-pause"></i></a>
+                            <a href="{% url 'delete_company' c.id %}" class="btn btn-sm btn-danger rounded-circle ms-2" onclick="return confirm('Full Delete?')" title="Delete"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
-                    {% empty %}
-                    <tr><td colspan="5" class="text-center py-5 text-muted">No active partners found.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>

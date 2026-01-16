@@ -1,110 +1,106 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-5 mt-3">
-    <div>
-        <h1 class="fw-bold text-white mb-1">Overview</h1>
-        <p class="text-white-50 mb-0">System operational. <span class="text-success fw-bold">All systems go.</span></p>
-    </div>
-    <div class="d-flex gap-3">
-        <div class="px-4 py-2 d-flex align-items-center text-white-50 border border-secondary border-opacity-25 rounded-pill bg-dark">
-            <i class="fas fa-clock text-warning me-2"></i>
-            <span>{{ company.days_remaining }} Days Left</span>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
+        <div>
+            <h2 class="fw-bold text-white mb-1">Welcome, {{ company.name }}</h2>
+            <p class="text-white-50">Fleet Overview & Performance Metrics</p>
         </div>
-        <a href="{% url 'add_load' %}" class="btn btn-primary fw-bold px-4 py-2 rounded-pill shadow-lg">
-            <i class="fas fa-bolt me-2"></i> New Load
+        <a href="{% url 'add_load' %}" class="btn btn-primary rounded-pill shadow-lg fw-bold">
+            <i class="fas fa-plus me-2"></i> Book New Load
         </a>
     </div>
-</div>
 
-<div class="row g-4 mb-5">
-    <div class="col-md-4">
-        <div class="card p-4 h-100 position-relative overflow-hidden">
-            <div class="position-absolute top-0 end-0 p-3 opacity-10"><i class="fas fa-wallet fa-4x text-white"></i></div>
-            <small class="text-uppercase text-white-50 fw-bold">Gross Revenue</small>
-            <h2 class="text-white display-5 fw-bold mt-2 mb-0">${{ stats.revenue }}</h2>
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card bg-dark border border-secondary border-opacity-25 shadow-lg p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-white-50 text-uppercase fw-bold">Total Revenue</small>
+                        <h2 class="text-white display-6 fw-bold mt-2">${{ stats.revenue }}</h2>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                        <i class="fas fa-wallet fa-lg"></i>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card p-4 h-100 position-relative overflow-hidden" style="border-bottom: 4px solid #f59e0b;">
-            <div class="position-absolute top-0 end-0 p-3 opacity-10"><i class="fas fa-chart-pie fa-4x text-warning"></i></div>
-            <small class="text-uppercase text-white-50 fw-bold">Net Profit</small>
-            {% if show_profit %}
-                <h2 class="text-warning display-5 fw-bold mt-2 mb-0">${{ stats.profit }}</h2>
-            {% else %}
-                <div class="mt-2"><h3 class="text-white-50 mb-2"><i class="fas fa-lock me-2"></i>Locked</h3><a href="{% url 'subscription_plans' %}" class="btn btn-sm btn-outline-warning rounded-pill">Upgrade</a></div>
-            {% endif %}
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card p-4 h-100 position-relative overflow-hidden">
-            <div class="position-absolute top-0 end-0 p-3 opacity-10"><i class="fas fa-truck fa-4x text-info"></i></div>
-            <small class="text-uppercase text-white-50 fw-bold">Active Assets</small>
-            <h2 class="text-white display-5 fw-bold mt-2 mb-0">{{ stats.drivers }}</h2>
-        </div>
-    </div>
-</div>
 
-<div class="card overflow-hidden mb-4">
-    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h5 class="text-white fw-bold mb-0"><i class="fas fa-satellite-dish text-primary me-2"></i> Fleet Status</h5>
-        <a href="{% url 'manage_loads' %}" class="btn btn-sm btn-outline-light rounded-pill">Manage Loads &rarr;</a>
-    </div>
-    <div class="p-0">
-        <table class="table table-hover mb-0 align-middle">
-            <thead>
-                <tr>
-                    <th class="ps-4 py-3">Unit Number</th>
-                    <th class="py-3">Driver Name</th>
-                    <th class="py-3">Live Status</th>
-                    <th class="py-3 text-end pe-4">Location / Next Available</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in schedule %}
-                <tr>
-                    <td class="ps-4 fw-bold text-white">{{ item.unit }}</td>
-                    <td class="text-white-50">{{ item.driver }}</td>
-                    <td>
-                        {% if item.status_label == "Booked" %}
-                            <span class="badge bg-info bg-opacity-25 text-info border border-info border-opacity-25 px-3 py-2 rounded-pill">
-                                <i class="fas fa-bookmark me-1"></i> Booked
-                            </span>
-                        {% elif item.status_label == "In Transit" %}
-                            <span class="badge bg-warning bg-opacity-25 text-warning border border-warning border-opacity-25 px-3 py-2 rounded-pill">
-                                <i class="fas fa-shipping-fast me-1"></i> In Transit
-                            </span>
-                        {% elif item.status_label == "Delivered" %}
-                            <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 px-3 py-2 rounded-pill">
-                                <i class="fas fa-check-circle me-1"></i> Delivered
-                            </span>
+        <div class="col-md-4">
+            <div class="card bg-dark border border-secondary border-opacity-25 shadow-lg p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-white-50 text-uppercase fw-bold">Net Profit</small>
+                        {% if show_profit %}
+                            <h2 class="text-success display-6 fw-bold mt-2">${{ stats.profit }}</h2>
                         {% else %}
-                            <span class="badge bg-secondary bg-opacity-25 text-white-50 border border-secondary border-opacity-25 px-3 py-2 rounded-pill">
-                                Available
-                            </span>
+                            <div class="mt-2">
+                                <span class="badge bg-secondary mb-2"><i class="fas fa-lock me-1"></i> Pro Feature</span>
+                                <h4 class="text-muted" style="filter: blur(4px); user-select: none;">$12,450</h4>
+                            </div>
                         {% endif %}
-                    </td>
-                    <td class="text-end pe-4 text-white">
-                        {% if item.status_label == "Available" %}
-                            <span class="text-success">Ready for Dispatch</span>
-                        {% else %}
-                            <i class="fas fa-map-marker-alt text-danger me-2"></i>{{ item.next_available }}
-                        {% endif %}
-                    </td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="4" class="text-center py-5 text-muted">No assets.</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+                    </div>
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle text-success">
+                        <i class="fas fa-chart-line fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<div class="card p-4 d-flex flex-row justify-content-between align-items-center">
-    <div class="d-flex align-items-center">
-        <div class="bg-primary bg-opacity-25 text-primary rounded-circle p-3 me-3"><i class="fas fa-users fa-xl"></i></div>
-        <div><h5 class="text-white fw-bold mb-0">Total Fleet Count</h5><p class="text-white-50 mb-0 small">Managed drivers and owner-operators</p></div>
+        <div class="col-md-4">
+            <div class="card bg-dark border border-secondary border-opacity-25 shadow-lg p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <small class="text-white-50 text-uppercase fw-bold">Active Units</small>
+                        <h2 class="text-white display-6 fw-bold mt-2">{{ stats.drivers }}</h2>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle text-warning">
+                        <i class="fas fa-truck fa-lg"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="text-end"><h2 class="text-white fw-bold mb-0">{{ stats.drivers }}</h2><small class="text-success fw-bold">Units Online</small></div>
+
+    <div class="card bg-dark border border-secondary border-opacity-25 shadow-lg">
+        <div class="card-header bg-transparent border-bottom border-secondary border-opacity-25 py-3">
+            <h5 class="text-white mb-0">Live Fleet Schedule</h5>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-dark table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Unit #</th>
+                        <th>Driver</th>
+                        <th>Status</th>
+                        <th>Next Availability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in schedule %}
+                    <tr>
+                        <td class="ps-4 fw-bold text-primary">{{ item.unit }}</td>
+                        <td class="text-white">{{ item.driver }}</td>
+                        <td>
+                            {% if item.status_label == 'Available' %}
+                                <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-25 rounded-pill px-3">Available</span>
+                            {% elif item.status_label == 'In Transit' %}
+                                <span class="badge bg-primary bg-opacity-25 text-primary border border-primary border-opacity-25 rounded-pill px-3">In Transit</span>
+                            {% else %}
+                                <span class="badge bg-secondary bg-opacity-25 text-secondary border border-secondary border-opacity-25 rounded-pill px-3">{{ item.status_label }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-white-50">{{ item.next_available }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted">No active units found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

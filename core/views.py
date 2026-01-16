@@ -91,6 +91,13 @@ def dashboard(request):
     
     drivers = Driver.objects.filter(company=c)
     loads = Load.objects.filter(company=c).exclude(status='paid')
+    
+    # --- PROFIT CALCULATION LIMIT ---
+    plan = str(c.plan_type).lower()
+    show_profit = True
+    if 'starter' in plan: 
+        show_profit = False  # Starter Plan CANNOT see profit
+    
     schedule = []
     for d in drivers:
         fl = Load.objects.filter(driver=d).exclude(status='paid').order_by('-delivery_date').first()
@@ -99,8 +106,14 @@ def dashboard(request):
             status_label = fl.status.title()
             next_avail = f"{fl.destination} @ {fl.delivery_date.strftime('%b %d, %H:%M')}"
         schedule.append({'unit': d.truck_number, 'driver': d.name, 'status_label': status_label, 'next_available': next_avail})
-    stats = {'revenue': sum(l.rate for l in loads), 'profit': sum(l.net_profit for l in loads), 'drivers': drivers.count()}
-    return render(request, 'dashboard.html', {'stats': stats, 'company': c, 'schedule': schedule})
+    
+    stats = {
+        'revenue': sum(l.rate for l in loads),
+        'profit': sum(l.net_profit for l in loads) if show_profit else 0, # Hide value if starter
+        'drivers': drivers.count()
+    }
+    # Pass show_profit to template so we can blur/lock it
+    return render(request, 'dashboard.html', {'stats': stats, 'company': c, 'schedule': schedule, 'show_profit': show_profit})
 
 @login_required
 def manage_loads(request):
@@ -117,8 +130,25 @@ def manage_fleet(request):
     c = request.user.userprofile.company
     if not c.is_active: return render(request, 'payment_pending.html')
     drivers = Driver.objects.filter(company=c)
+    
+    # --- FLEET LIMIT LOGIC ---
     if request.method == 'POST':
-        d = Driver(company=c, name=request.POST.get('name'), truck_number=request.POST.get('truck_number'), status='available'); d.save(); return redirect('manage_fleet')
+        plan = str(c.plan_type).lower()
+        limit = 3 # Starter
+        if 'pro' in plan: limit = 10
+        elif 'enterprise' in plan: limit = 9999
+        
+        if drivers.count() >= limit:
+            messages.error(request, f"Plan Limit Reached! Your plan allows {limit} trucks.")
+        else:
+            d = Driver(company=c)
+            d.name = request.POST.get('name')
+            d.truck_number = request.POST.get('truck_number')
+            if request.FILES.get('cdl_file'): d.cdl_file = request.FILES['cdl_file']
+            d.status = 'available'
+            d.save()
+            messages.success(request, "Unit Added Successfully.")
+        return redirect('manage_fleet')
     return render(request, 'manage_fleet.html', {'drivers': drivers})
 
 @login_required
@@ -159,12 +189,37 @@ def document_center(request):
 
 @login_required
 def manage_clients(request):
-    c = request.user.userprofile.company; return render(request, 'manage_clients.html', {'owners': UserProfile.objects.filter(company=c, role='owner')})
+    c = request.user.userprofile.company
+    
+    # --- OWNER LOGIN LIMIT LOGIC ---
+    if request.method == 'POST':
+        plan = str(c.plan_type).lower()
+        # Define limits: Starter=0 extra, Pro=3 extra, Enterprise=Unlimited
+        limit = 0 
+        if 'pro' in plan: limit = 3
+        elif 'enterprise' in plan: limit = 999
+        
+        current_logins = UserProfile.objects.filter(company=c, role='owner').count()
+        
+        if current_logins >= limit:
+            messages.error(request, f"Login Limit Reached! Your plan allows {limit} extra accounts.")
+        else:
+            u_name = request.POST.get('username')
+            u_pass = request.POST.get('password')
+            if User.objects.filter(username=u_name).exists():
+                messages.error(request, "Username taken.")
+            else:
+                u = User.objects.create_user(username=u_name, password=u_pass)
+                UserProfile.objects.create(user=u, company=c, role='owner')
+                messages.success(request, f"Owner login created: {u_name}")
+            return redirect('manage_clients')
+
+    return render(request, 'manage_clients.html', {'owners': UserProfile.objects.filter(company=c, role='owner')})
 
 @login_required
 def client_dashboard(request): return render(request, 'client_dashboard.html')
 
-# --- PUBLIC STATIC ---
+# --- PUBLIC ---
 def home(request): return render(request, 'home.html')
 def portal_choice(request): return render(request, 'portal_choice.html')
 def public_plans(request): return render(request, 'public_plans.html')

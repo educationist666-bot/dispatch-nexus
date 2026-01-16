@@ -1,83 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Select Plan | DispatchNexus</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .strike { text-decoration: line-through; color: #dc3545; font-size: 1.2rem; }
-        .countdown-box { background: #fee2e2; color: #b91c1c; padding: 10px; border-radius: 8px; font-weight: bold; margin-bottom: 30px; display: inline-block; }
-    </style>
-</head>
-<body class="bg-light d-flex align-items-center justify-content-center" style="min-height:100vh;">
-    <div class="container text-center py-5">
-        
-        <div class="countdown-box">
-            🔥 FLASH SALE ENDS IN: <span id="timer">22d 00h 00m 00s</span>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <h1 class="fw-bold text-white mb-2">Choose Your Power</h1>
+    <p class="text-white-50 mb-5">Unlock the full potential of DispatchNexus. Select a plan below.</p>
+
+    <div class="row g-4 justify-content-center">
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary h-100 p-4 shadow-lg hover-scale">
+                <h3 class="text-white fw-bold">Starter</h3>
+                <div class="display-4 fw-bold text-primary my-3">$99<span class="fs-6 text-muted">/mo</span></div>
+                <div class="text-white-50 mb-4">or $999/yr <span class="badge bg-success">Save 15%</span></div>
+                <ul class="list-unstyled text-white-50 mb-4 text-start mx-auto" style="max-width: 250px;">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Manage up to 3 Trucks</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Basic Load Board</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Document Storage</li>
+                </ul>
+                <a href="{% url 'process_payment' %}?plan=starter" class="btn btn-outline-light w-100 rounded-pill fw-bold">Select Monthly</a>
+                <a href="{% url 'process_payment' %}?plan=starter_annual" class="btn btn-outline-primary w-100 rounded-pill fw-bold mt-2">Select Annual</a>
+            </div>
         </div>
 
-        <h1 class="fw-bold mb-5">Save 40% Today</h1>
-        <div class="row justify-content-center g-4">
-            
-            <div class="col-md-3">
-                <div class="card h-100 p-4 border-0 shadow-sm">
-                    <h4>Starter</h4>
-                    <h1><span class="strike">$35</span> $25</h1>
-                    <small class="text-muted">/month</small>
-                    <ul class="list-unstyled mt-3 mb-4 text-start small">
-                        <li>✅ 3 Trucks Max</li>
-                        <li>✅ Basic Dashboard</li>
-                        <li>✅ Document Storage</li>
-                    </ul>
-                    <a href="{% url 'process_payment' %}?plan=starter" class="btn btn-outline-dark w-100">Select Starter</a>
-                </div>
+        <div class="col-md-4">
+            <div class="card bg-dark border-primary h-100 p-4 shadow-lg position-relative" style="border-width: 2px;">
+                <div class="position-absolute top-0 start-50 translate-middle badge bg-primary px-3 py-2 rounded-pill">MOST POPULAR</div>
+                <h3 class="text-white fw-bold">Pro Fleet</h3>
+                <div class="display-4 fw-bold text-primary my-3">$199<span class="fs-6 text-muted">/mo</span></div>
+                <div class="text-white-50 mb-4">or $1,999/yr <span class="badge bg-success">Save 15%</span></div>
+                <ul class="list-unstyled text-white-50 mb-4 text-start mx-auto" style="max-width: 250px;">
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i>Manage up to 10 Trucks</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i>Profit & Loss Analytics</li>
+                    <li class="mb-2"><i class="fas fa-check text-primary me-2"></i>Driver Settlements</li>
+                </ul>
+                <a href="{% url 'process_payment' %}?plan=pro" class="btn btn-light w-100 rounded-pill fw-bold">Select Monthly</a>
+                <a href="{% url 'process_payment' %}?plan=pro_annual" class="btn btn-primary w-100 rounded-pill fw-bold mt-2">Select Annual</a>
             </div>
+        </div>
 
-            <div class="col-md-3">
-                <div class="card h-100 p-4 border-primary border-3 shadow">
-                    <div class="badge bg-primary mb-2">BEST VALUE</div>
-                    <h4>Professional</h4>
-                    <h1><span class="strike">$112</span> $80</h1>
-                    <small class="text-muted">/month</small>
-                    <ul class="list-unstyled mt-3 mb-4 text-start small fw-bold">
-                        <li>✅ 10 Trucks Max</li>
-                        <li>✅ Net Profit Calc</li>
-                        <li>✅ Document Cloud</li>
-                        <li>✅ Owner Portal (Viewer)</li>
-                    </ul>
-                    <a href="{% url 'process_payment' %}?plan=pro" class="btn btn-primary w-100">Select Pro</a>
-                </div>
+        <div class="col-md-4">
+            <div class="card bg-dark border-secondary h-100 p-4 shadow-lg">
+                <h3 class="text-white fw-bold">Enterprise</h3>
+                <div class="display-4 fw-bold text-warning my-3">$499<span class="fs-6 text-muted">/mo</span></div>
+                <div class="text-white-50 mb-4">or $4,999/yr <span class="badge bg-success">Save 15%</span></div>
+                <ul class="list-unstyled text-white-50 mb-4 text-start mx-auto" style="max-width: 250px;">
+                    <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Unlimited Trucks</li>
+                    <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>Dedicated Account Mgr</li>
+                    <li class="mb-2"><i class="fas fa-check text-warning me-2"></i>API Access</li>
+                </ul>
+                <a href="{% url 'process_payment' %}?plan=enterprise" class="btn btn-outline-light w-100 rounded-pill fw-bold">Select Monthly</a>
+                <a href="{% url 'process_payment' %}?plan=enterprise_annual" class="btn btn-outline-warning w-100 rounded-pill fw-bold mt-2">Select Annual</a>
             </div>
-
-            <div class="col-md-3">
-                <div class="card h-100 p-4 border-0 shadow-sm">
-                    <h4>Enterprise</h4>
-                    <h1><span class="strike">$140</span> $100</h1>
-                    <small class="text-muted">/month</small>
-                    <ul class="list-unstyled mt-3 mb-4 text-start small">
-                        <li>✅ Unlimited Trucks</li>
-                        <li>✅ Owner Login (View Only)</li>
-                        <li>✅ Priority Support</li>
-                    </ul>
-                    <a href="{% url 'process_payment' %}?plan=enterprise" class="btn btn-outline-dark w-100">Select Enterprise</a>
-                </div>
-            </div>
-
         </div>
     </div>
-
-    <script>
-        // Simple 22 Day Countdown
-        const endDate = new Date();
-        endDate.setDate(endDate.getDate() + 22); 
-        
-        setInterval(() => {
-            const now = new Date();
-            const diff = endDate - now;
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            document.getElementById("timer").innerHTML = `${d}d ${h}h ${m}m 00s`;
-        }, 1000);
-    </script>
-</body>
-</html>
+</div>
+{% endblock %}

@@ -1,146 +1,104 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-5">
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4 mt-3">
         <div>
-            <h2 class="fw-bold text-dark"><i class="fas fa-archive text-warning me-2"></i> Document Center</h2>
-            <p class="text-muted">Centralized digital filing for all company assets.</p>
+            <h2 class="fw-bold text-white mb-1">Document Center</h2>
+            <p class="text-white-50">Centralized digital filing for all company assets.</p>
         </div>
-        <a href="{% url 'manage_fleet' %}" class="btn btn-dark shadow-sm"><i class="fas fa-cloud-upload-alt me-2"></i> Upload New</a>
+        <button class="btn btn-outline-light rounded-pill">
+            <i class="fas fa-cloud-upload-alt me-2"></i> Quick Upload
+        </button>
     </div>
 
-    <div class="row">
-        <div class="col-lg-10 mx-auto">
-            
-            <div class="card shadow-sm border-0 rounded-3 mb-3">
-                <div class="card-header bg-white py-3 d-flex align-items-center cursor-pointer" data-bs-toggle="collapse" data-bs-target="#folderCompany">
-                    <i class="fas fa-folder fa-2x text-primary me-3"></i>
-                    <div class="flex-grow-1">
-                        <h5 class="fw-bold mb-0 text-dark">Company Authority</h5>
-                        <small class="text-muted">MC Certificate, Insurance, W-9</small>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card h-100 bg-dark border border-secondary border-opacity-25 shadow-lg p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+                        <i class="fas fa-building fa-2x text-warning"></i>
                     </div>
-                    <i class="fas fa-chevron-down text-muted"></i>
+                    <div>
+                        <h5 class="fw-bold text-white mb-0">Company Files</h5>
+                        <small class="text-white-50">MC Authority, W9, Insurance</small>
+                    </div>
                 </div>
-                <div id="folderCompany" class="collapse show">
-                    <div class="card-body bg-light">
-                        <div class="list-group">
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-certificate text-muted me-3"></i>MC Certificate</span>
-                                {% if company.mc_cert %}<a href="{{ company.mc_cert.url }}" target="_blank" class="btn btn-sm btn-outline-primary">View PDF</a>{% else %}<span class="badge bg-secondary">Empty</span>{% endif %}
-                            </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-shield-alt text-muted me-3"></i>Insurance (COI)</span>
-                                {% if company.insurance_cert %}<a href="{{ company.insurance_cert.url }}" target="_blank" class="btn btn-sm btn-outline-primary">View PDF</a>{% else %}<span class="badge bg-secondary">Empty</span>{% endif %}
-                            </div>
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <span><i class="fas fa-file-invoice text-muted me-3"></i>W-9 Form</span>
-                                {% if company.w9_cert %}<a href="{{ company.w9_cert.url }}" target="_blank" class="btn btn-sm btn-outline-primary">View PDF</a>{% else %}<span class="badge bg-secondary">Empty</span>{% endif %}
-                            </div>
-                        </div>
-                    </div>
+                <div class="d-grid gap-2">
+                    {% if company.mc_cert %}
+                        <a href="{{ company.mc_cert.url }}" target="_blank" class="btn btn-outline-secondary text-start text-white">
+                            <i class="fas fa-file-pdf text-danger me-2"></i> MC Certificate
+                        </a>
+                    {% endif %}
+                    {% if company.insurance_cert %}
+                        <a href="{{ company.insurance_cert.url }}" target="_blank" class="btn btn-outline-secondary text-start text-white">
+                            <i class="fas fa-file-pdf text-danger me-2"></i> Insurance Cert
+                        </a>
+                    {% endif %}
+                    {% if company.w9_cert %}
+                        <a href="{{ company.w9_cert.url }}" target="_blank" class="btn btn-outline-secondary text-start text-white">
+                            <i class="fas fa-file-pdf text-danger me-2"></i> W9 Document
+                        </a>
+                    {% endif %}
                 </div>
             </div>
+        </div>
 
-            <div class="card shadow-sm border-0 rounded-3 mb-3">
-                <div class="card-header bg-white py-3 d-flex align-items-center cursor-pointer collapsed" data-bs-toggle="collapse" data-bs-target="#folderFleet">
-                    <i class="fas fa-folder fa-2x text-success me-3"></i>
-                    <div class="flex-grow-1">
-                        <h5 class="fw-bold mb-0 text-dark">Fleet Documents</h5>
-                        <small class="text-muted">{{ drivers.count }} Driver Folders</small>
+        <div class="col-md-4">
+            <div class="card h-100 bg-dark border border-secondary border-opacity-25 shadow-lg p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-info bg-opacity-10 p-3 rounded-circle me-3">
+                        <i class="fas fa-id-card fa-2x text-info"></i>
                     </div>
-                    <i class="fas fa-chevron-down text-muted"></i>
+                    <div>
+                        <h5 class="fw-bold text-white mb-0">Driver Records</h5>
+                        <small class="text-white-50">CDLs, Medical Cards</small>
+                    </div>
                 </div>
-                <div id="folderFleet" class="collapse">
-                    <div class="card-body bg-light">
-                        <div class="accordion" id="fleetAccordion">
-                            {% for d in drivers %}
-                            <div class="accordion-item border-0 mb-2 shadow-sm">
-                                <h2 class="accordion-header">
-                                    <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#driver{{ d.id }}">
-                                        <i class="fas fa-truck text-muted me-2"></i> Unit {{ d.truck_number }} - {{ d.name }}
-                                    </button>
-                                </h2>
-                                <div id="driver{{ d.id }}" class="accordion-collapse collapse" data-bs-parent="#fleetAccordion">
-                                    <div class="accordion-body">
-                                        <ul class="list-group list-group-flush">
-                                            <li class="list-group-item d-flex justify-content-between">
-                                                <span>CDL License</span>
-                                                {% if d.cdl_file %}<a href="{{ d.cdl_file.url }}" target="_blank" class="text-primary">Open</a>{% else %}<span class="text-muted">-</span>{% endif %}
-                                            </li>
-                                            <li class="list-group-item d-flex justify-content-between">
-                                                <span>Medical Card</span>
-                                                {% if d.medical_card_file %}<a href="{{ d.medical_card_file.url }}" target="_blank" class="text-primary">Open</a>{% else %}<span class="text-muted">-</span>{% endif %}
-                                            </li>
-                                            <li class="list-group-item d-flex justify-content-between">
-                                                <span>Truck Registration</span>
-                                                {% if d.registration_file %}<a href="{{ d.registration_file.url }}" target="_blank" class="text-primary">Open</a>{% else %}<span class="text-muted">-</span>{% endif %}
-                                            </li>
-                                            <li class="list-group-item d-flex justify-content-between">
-                                                <span>Truck Insurance</span>
-                                                {% if d.insurance_file %}<a href="{{ d.insurance_file.url }}" target="_blank" class="text-primary">Open</a>{% else %}<span class="text-muted">-</span>{% endif %}
-                                            </li>
-                                        </ul>
-                                    </div>
+                <div class="list-group list-group-flush">
+                    {% for d in drivers %}
+                        <div class="list-group-item bg-transparent text-white-50 border-secondary border-opacity-25 px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>{{ d.name }}</span>
+                                <div>
+                                    {% if d.cdl_file %}<a href="{{ d.cdl_file.url }}" class="text-info me-2"><i class="fas fa-file"></i></a>{% endif %}
                                 </div>
                             </div>
-                            {% empty %}
-                            <p class="text-center text-muted my-3">No drivers added yet.</p>
-                            {% endfor %}
                         </div>
-                    </div>
+                    {% empty %}
+                        <p class="text-muted small">No driver documents.</p>
+                    {% endfor %}
                 </div>
             </div>
+        </div>
 
-            <div class="card shadow-sm border-0 rounded-3 mb-3">
-                <div class="card-header bg-white py-3 d-flex align-items-center cursor-pointer collapsed" data-bs-toggle="collapse" data-bs-target="#folderLoads">
-                    <i class="fas fa-folder fa-2x text-warning me-3"></i>
-                    <div class="flex-grow-1">
-                        <h5 class="fw-bold mb-0 text-dark">Load Documents</h5>
-                        <small class="text-muted">Rate Cons, BOLs, PODs</small>
+        <div class="col-md-4">
+            <div class="card h-100 bg-dark border border-secondary border-opacity-25 shadow-lg p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                        <i class="fas fa-file-invoice-dollar fa-2x text-success"></i>
                     </div>
-                    <i class="fas fa-chevron-down text-muted"></i>
+                    <div>
+                        <h5 class="fw-bold text-white mb-0">Load Paperwork</h5>
+                        <small class="text-white-50">Rate Cons, BOLs, PODs</small>
+                    </div>
                 </div>
-                <div id="folderLoads" class="collapse">
-                    <div class="card-body bg-light">
-                        <div class="table-responsive bg-white rounded shadow-sm p-3">
-                            <table class="table table-hover mb-0 align-middle">
-                                <thead class="small text-uppercase text-muted">
-                                    <tr>
-                                        <th>Ref #</th>
-                                        <th>Route</th>
-                                        <th>Rate Con</th>
-                                        <th>BOL</th>
-                                        <th>POD</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for load in loads %}
-                                    <tr>
-                                        <td class="fw-bold text-dark">{{ load.load_ref }}</td>
-                                        <td class="small">{{ load.origin }} &rarr; {{ load.destination }}</td>
-                                        
-                                        <td>{% if load.rate_con_file %}<a href="{{ load.rate_con_file.url }}" target="_blank"><i class="fas fa-file-pdf text-danger"></i> PDF</a>{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                                        <td>{% if load.bol_file %}<a href="{{ load.bol_file.url }}" target="_blank"><i class="fas fa-file-alt text-primary"></i> View</a>{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                                        <td>{% if load.pod_file %}<a href="{{ load.pod_file.url }}" target="_blank"><i class="fas fa-file-check text-success"></i> View</a>{% else %}<span class="text-muted">-</span>{% endif %}</td>
-                                    </tr>
-                                    {% empty %}
-                                    <tr><td colspan="5" class="text-center text-muted py-3">No loads booked yet.</td></tr>
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                <div class="list-group list-group-flush">
+                    {% for l in loads %}
+                        {% if l.rate_confirmation %}
+                        <div class="list-group-item bg-transparent text-white-50 border-secondary border-opacity-25 px-0">
+                            <div class="d-flex justify-content-between">
+                                <span>Load #{{ l.load_ref }}</span>
+                                <a href="{{ l.rate_confirmation.url }}" class="text-success"><i class="fas fa-download"></i></a>
+                            </div>
                         </div>
-                    </div>
+                        {% endif %}
+                    {% empty %}
+                        <p class="text-muted small">No load documents.</p>
+                    {% endfor %}
                 </div>
             </div>
-
         </div>
     </div>
 </div>
-
-<style>
-    .cursor-pointer { cursor: pointer; }
-    .accordion-button:not(.collapsed) { background-color: #f8f9fa; color: #000; }
-    .accordion-button:focus { box-shadow: none; }
-</style>
 {% endblock %}
